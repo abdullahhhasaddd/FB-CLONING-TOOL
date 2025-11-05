@@ -38,7 +38,7 @@ termux-setup-storage
 cd ~
 ```
 ```bash
-git clone https://github.com/abdullahhhasddd/FB-CLONING-TOOL.git
+git clone https://github.com/abdullahhhasaddd/FB-CLONING-TOOL.git
 ```
 ```bash
 cd FB-CLONING-TOOL
