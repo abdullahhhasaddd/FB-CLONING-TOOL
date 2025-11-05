@@ -17,7 +17,6 @@ Copy–paste these commands in Termux:
 ```bash
 pkg update -y && pkg upgrade -y
 pkg install -y python git
-
 termux-setup-storage
 git clone https://github.com/abdullahhhasddd/FB-CLONING-TOOL.git
 cd FB-CLONING-TOOL
