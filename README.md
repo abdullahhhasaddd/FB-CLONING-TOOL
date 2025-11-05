@@ -18,17 +18,10 @@ Copy–paste these commands in Termux:
 pkg update -y && pkg upgrade -y
 pkg install -y python git
 
-# Optional (to access shared storage if needed)
 termux-setup-storage
-
-# Clone the repository (replace with your GitHub username and repo if needed)
 git clone https://github.com/abdullahhhasddd/FB-CLONING-TOOL.git
 cd FB-CLONING-TOOL
-
-# Install dependencies
 pip install requests urllib3 mechanize rich beautifulsoup4
-
-# Run the tool
 python RAPTOR.py
 ```
 
