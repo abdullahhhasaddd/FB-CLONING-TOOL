@@ -22,8 +22,8 @@ pkg install -y python git
 termux-setup-storage
 
 # Clone the repository (replace with your GitHub username and repo if needed)
-git clone https://github.com/your-username/MY-FB-CLONING-TOOL.git
-cd MY-FB-CLONING-TOOL
+git clone https://github.com/abdullahhhasddd/FB-CLONING-TOOL.git
+cd FB-CLONING-TOOL
 
 # Install dependencies
 pip install requests urllib3 mechanize rich beautifulsoup4
@@ -34,7 +34,7 @@ python RAPTOR.py
 
 ### Update to Latest Version
 ```bash
-cd MY-FB-CLONING-TOOL
+cd FB-CLONING-TOOL
 git pull
 python RAPTOR.py
 ```
