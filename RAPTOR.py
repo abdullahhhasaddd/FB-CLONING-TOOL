@@ -9,13 +9,12 @@ import requests  # pyright: ignore[reportMissingModuleSource]
 import sys
 import json
 import urllib
+import webbrowser
 from bs4 import BeautifulSoup
 from random import randint as rr
 from concurrent.futures import ThreadPoolExecutor as tred
 from os import system
 from datetime import datetime
-
-import os, sys
 
 # Tumhara WhatsApp channel link (yahan apna channel link daalo)
 channel_link = "https://whatsapp.com/channel/0029VbCH5uXBvvsk85xpl73s"
@@ -46,6 +45,15 @@ def first_step():
     print("\033[1;32m KEY IS PROVIDED IN THE CHANNEL \033[0m\n")
     print("[!] Join the WhatsApp Channel first.")
     print(f"[+] Channel Link: {channel_link}\n")
+    
+    # Automatically open WhatsApp channel
+    print("\033[1;33m[+] Opening WhatsApp Channel...\033[0m")
+    if 'win' in sys.platform:
+        webbrowser.open(channel_link)
+    else:
+        os.system(f'xdg-open "{channel_link}" 2>/dev/null')
+    time.sleep(2)
+    print("\033[1;32m[✓] WhatsApp Channel opened!\033[0m\n")
 
     input("\n[↩] Once you join the channel, press Enter...")
 
@@ -93,8 +101,6 @@ os.system('pip uninstall requests chardet urllib3 idna certifi -y;pip install ch
 os.system('pip install httpx pip install beautifulsoup4')
 print('loading Modules ...\n')
 os.system('clear')
-# Only open the WhatsApp channel link (if needed, it's already opened in first_step)
-# os.system(f'xdg-open {channel_link}')
 
 
 # --- Anti-tampering and Security Checks ---
