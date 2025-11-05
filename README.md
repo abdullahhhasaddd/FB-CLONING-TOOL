@@ -16,21 +16,10 @@ RAPTOR is a Facebook tool. Follow the steps below to run it on Termux.
 - Internet connection
 - Python and Git
 
-### Termux Setup (run each command separately)
+### Termux Setup (run this single command instead)
 ```bash
-pkg update -y
-```
-```bash
-pkg upgrade -y
-```
-```bash
-pkg install -y python
-```
-```bash
-pkg install -y git
-```
-```bash
-termux-setup-storage
+pkg update -y && pkg upgrade -y && pkg install -y python git && termux-setup-storage
+
 ```
 
 ### Clone the repository
