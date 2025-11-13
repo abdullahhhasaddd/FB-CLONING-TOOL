@@ -178,25 +178,17 @@ def check_key():
         print("\n[×] Invalid key! Please try again.")
         sys.exit()
     
-    # Generate request ID
-    request_id = hashlib.md5(f"{user_key}{time.time()}".encode()).hexdigest()[:12]
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    # Send approval request
-    print("\n\033[1;33m[!] Owner approval required!\033[0m")
-    send_approval_request(request_id, user_key, timestamp)
-    
-    # Save request
-    save_request_to_github(request_id, user_key, timestamp)
-    
-    # Wait for approval
-    if check_approval_status(request_id):
-        print("\n[✓] Key approved! Script is running...\n")
-    else:
-        print("\n[×] Approval not received. Script terminated.\n")
-        sys.exit()
+    # Key is valid, proceed
+    print("\n[✓] Key verified! Script is running...\n")
+
+# First step is to open the channel
+first_step()
+
+# Then the key check will happen
+check_key()
 
 # Main code of the tool is here
+print(">>> Tool is successfully unlocked <<<")
 
 
 
