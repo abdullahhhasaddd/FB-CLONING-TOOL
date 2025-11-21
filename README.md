@@ -8,7 +8,7 @@
 
 **A powerful Facebook account cloning tool with advanced features**
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Configuration](#-configuration) • [Support](#-support)
+[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Support](#-support)
 
 </div>
 
