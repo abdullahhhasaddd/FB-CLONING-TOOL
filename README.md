@@ -23,7 +23,6 @@
   - [Android (Termux)](#android-termux)
   - [Linux](#linux)
 - [Usage](#-usage)
-- [Configuration](#-configuration)
 - [Troubleshooting](#-troubleshooting)
 - [Disclaimer](#-disclaimer)
 - [Support](#-support)
