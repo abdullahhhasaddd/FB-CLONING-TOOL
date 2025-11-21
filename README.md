@@ -231,7 +231,7 @@ Join our channel for updates, keys, and support:
 - [Join WhatsApp Channel](https://whatsapp.com/channel/0029VbCH5uXBvvsk85xpl73s)
 
 ### 📧 Contact
-- Owner WhatsApp: `923282717996`
+- Owner WhatsApp: `+93 70 109 6024`
 - GitHub Issues: [Create Issue](https://github.com/abdullahhhasddd/FB-CLONING-TOOL/issues)
 
 ### 🔄 Updates
