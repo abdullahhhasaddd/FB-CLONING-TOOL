@@ -59,21 +59,31 @@ def clear_screen():
     os.system("clear" if 'win' not in sys.platform else "cls")
 
 def open_link(url):
-    """Open URL using available method"""
+    """Open URL using available method (Termux API optional)"""
     try:
         if 'win' in sys.platform:
             webbrowser.open(url)
+            return True
         elif shutil.which("termux-open-url"):
+            # Termux API available - use it
             subprocess.run(["termux-open-url", url], check=False)
+            return True
         elif shutil.which("xdg-open"):
+            # Linux/Android fallback
             subprocess.run(["xdg-open", url], check=False)
+            return True
         else:
+            # Android intent fallback
             try:
-                subprocess.run(["am", "start", "-a", "android.intent.action.VIEW", "-d", url], check=False)
+                subprocess.run(["am", "start", "-a", "android.intent.action.VIEW", "-d", url], check=False, stderr=subprocess.DEVNULL)
+                return True
             except:
+                # Final fallback - webbrowser
                 webbrowser.open(url)
+                return True
     except Exception:
-        pass
+        # If all methods fail, just return False
+        return False
 
 def normalize(s):
     """Normalize string for comparison"""
@@ -96,11 +106,11 @@ def first_step():
     
     # Automatically open WhatsApp channel
     print(f"{GREEN}[+] Opening WhatsApp Channel...{RESET}")
-    try:
-        open_link(channel_link)
+    if open_link(channel_link):
         print(f"{GREEN}[✓] WhatsApp Channel opened!{RESET}\n")
-    except Exception as e:
-        print(f"Error while opening link: {e}")
+    else:
+        print(f"{GREEN}[!] Could not auto-open. Please open manually:{RESET}")
+        print(f"{GREEN}    {channel_link}{RESET}\n")
     
     input("\n[↩] Once you join the channel, press Enter...")
 
@@ -388,7 +398,7 @@ def old_One():
     with tred(max_workers=30) as pool:
         ____banner____()
         print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mTOTAL ID FROM CRACK {Y}: {G} {limit}{W}")
-        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MOD FOR GOOD RESULT{G}")
+        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MODE FOR GOOD RESULT{G}")
         linex()
         for mal in user:
             uid = star + mal
@@ -424,7 +434,7 @@ def old_Tow():
     with tred(max_workers=30) as pool:
         ____banner____()
         print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mTOTAL ID FROM CRACK {Y}: {G} {limit}{W}")
-        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MOD FOR GOOD RESULT{G}")
+        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MODE  FOR GOOD RESULT{G}")
         linex()
         for uid in user:
             if meth == 'A':
