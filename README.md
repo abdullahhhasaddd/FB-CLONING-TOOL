@@ -254,7 +254,7 @@ This project is for educational purposes. Use at your own risk.
 
 - **Developer:** Abdullah Asad
 - **Tool Name:** RAPTOR
-- **Version:** 2.5
+- **Version:** 3.1
 
 ---
 
