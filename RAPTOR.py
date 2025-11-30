@@ -11,6 +11,7 @@ import requests
 import sys
 import json
 import urllib
+import urllib.parse
 import subprocess
 import shutil
 import webbrowser
@@ -96,42 +97,42 @@ approved_normalized = {normalize(k) for k in approved_keys}
 def first_step():
     clear_screen()
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print(f"        {GREEN}🔒 Script Locked 🔒{RESET}")
+    print("        Script is Locked")
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-    print(f"{GREEN} THIS TOOL IS PAID ✅ {RESET}\n")
-    print(f"{GREEN} JOIN OUR WHATSAPP CHANNEL ✅ {RESET}\n")
-    print(f"{GREEN} KEY IS PROVIDED IN THE CHANNEL {RESET}\n")
-    print("[!] Join the WhatsApp Channel first.")
+    print(f"{GREEN} JOIN OUR WHATSAPP CHANNEL {RESET}\n")
+    print(f"{GREEN} KEY WILL BE PROVIDED IN THE CHANNEL {RESET}\n")
+    print("[!] Please join the WhatsApp Channel first.")
     print(f"[+] Channel Link: {channel_link}\n")
     
     # Automatically open WhatsApp channel
     print(f"{GREEN}[+] Opening WhatsApp Channel...{RESET}")
     if open_link(channel_link):
-        print(f"{GREEN}[✓] WhatsApp Channel opened!{RESET}\n")
+        print(f"{GREEN}[+] WhatsApp Channel opened!{RESET}\n")
     else:
         print(f"{GREEN}[!] Could not auto-open. Please open manually:{RESET}")
         print(f"{GREEN}    {channel_link}{RESET}\n")
-    
-    input("\n[↩] Once you join the channel, press Enter...")
+
+    input("\n[Press Enter] Once you join the channel, press Enter...")
+
 
 def check_key():
     """Check key with retry logic"""
     attempts = 0
     while attempts < MAX_ATTEMPTS:
-        user_key = input("\n[?] Enter the key: ")
+        user_key = input("\n[?] Enter your key: ")
         user_norm = normalize(user_key)
         
         if user_norm in approved_normalized:
-            print(f"\n{GREEN}[✓] Key approved! Script is running...{RESET}\n")
+            print(f"\n{GREEN}[+] Key approved! Script is running...{RESET}\n")
             return True
         else:
             attempts += 1
             remaining = MAX_ATTEMPTS - attempts
             if remaining > 0:
-                print(f"\n{GREEN}[×] Invalid key! Attempts left: {remaining}{RESET}")
+                print(f"\n{GREEN}[X] Invalid key! Attempts left: {remaining}{RESET}")
             else:
-                print(f"\n[!] Too many wrong attempts. Wait {COOLDOWN_SECONDS} seconds.")
-                time.sleep(COOLDOWN_SECONDS)
+                print(f"\n[!] Too many wrong attempts. Please check the channel again.")
+                print(f"[!] Channel Link: {channel_link}")
                 sys.exit(1)
     
     print(f"\n[!] Too many wrong attempts. Exiting...")
@@ -158,7 +159,7 @@ print(' \x1b[38;5;46mSERVERS ARE LOADING...')
 
 os.system('pip uninstall requests chardet urllib3 idna certifi -y;pip install chardet urllib3 idna certifi requests')
 os.system('pip install httpx beautifulsoup4')
-print('loading Modules ...\n')
+print('Loading Modules ...\n')
 os.system('clear' if 'win' not in sys.platform else 'cls')
 
 # --- Anti-tampering and Security Checks ---
@@ -256,7 +257,7 @@ def window1():
     return random.choice([A, B, C, D])
 
 # Set window title
-sys.stdout.write('\x1b]2; RAPTOR :) \x07')
+sys.stdout.write('\x1b]2; RAPTOR \x07')
 
 def ____banner____():
     """Displays the main banner and tool information."""
@@ -373,7 +374,7 @@ def old_clone():
     elif _input in ('C', 'c', '03', '3'):
         old_Tree()
     else:
-        print(f"\n[×]{rad} Choose Value Option... ")
+        print(f"\n[X]{rad} Choose Valid Option... ")
         BNG_71_()
 
 def old_One():
@@ -434,7 +435,7 @@ def old_Tow():
     with tred(max_workers=30) as pool:
         ____banner____()
         print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mTOTAL ID FROM CRACK {Y}: {G} {limit}{W}")
-        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MODE  FOR GOOD RESULT{G}")
+        print(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mUSE AIRPLANE MODE FOR GOOD RESULT{G}")
         linex()
         for uid in user:
             if meth == 'A':
@@ -462,7 +463,7 @@ def old_Tree():
         uid = prefix + suffix
         user.append(uid)
     print('       \x1b[38;5;196m(\x1b[1;37mA\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mMETHOD A')
-    print('       \x1b[38;5;196m(\x1b[1;37mB\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mMethod B')
+    print('       \x1b[38;5;196m(\x1b[1;37mB\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mMETHOD B')
     linex()
     meth = input(f"       \x1b[38;5;196m(\x1b[1;37m★\x1b[38;5;196m)\x1b[1;37m>\x1b[38;5;196m×\x1b[1;37m<\x1b[38;5;46mCHOICE {W}(A/B): {Y}").strip().upper()
     with tred(max_workers=30) as pool:
@@ -584,7 +585,7 @@ if __name__ == '__main__':
     check_key()
     
     # Main code of the tool is here
-    print(">>> Tool is successfully unlocked <<<")
+    print(">>> Tool Successfully Unlocked <<<")
     
     # Run main menu
     BNG_71_()
